@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   ci:
@@ -106,10 +106,3 @@ jobs:
           echo "✅ Typecheck: Passed" >> $GITHUB_STEP_SUMMARY
           echo "✅ Unit Tests: Passed" >> $GITHUB_STEP_SUMMARY
           echo "✅ E2E Tests: Passed" >> $GITHUB_STEP_SUMMARY
-
-      - name: Trigger Deploy
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: peter-evans/repository-dispatch@v4
-        with:
-          event-type: deploy-pages
-          client-payload: '{"sha": "${{ github.sha }}"}'
