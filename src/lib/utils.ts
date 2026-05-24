@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { BodhiApiError, BodhiError } from '@bodhiapp/bodhi-js-react';
+import { BodhiApiError, BodhiError } from '@bodhiapp/bodhi-js-react-ext';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

@@ -20,6 +20,9 @@ dist-ssr
 !.env.test.example
 !.env.example
 
+# Extension signing key — never commit
+key.pem
+
 # Playwright
 /test-results/
 /playwright-report/

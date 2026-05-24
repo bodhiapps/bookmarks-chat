@@ -1,4 +1,4 @@
-import { useBodhi, LoginOptionsBuilder } from '@bodhiapp/bodhi-js-react';
+import { useBodhi, LoginOptionsBuilder } from '@bodhiapp/bodhi-js-react-ext';
 import { Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import StatusIndicator from './StatusIndicator';

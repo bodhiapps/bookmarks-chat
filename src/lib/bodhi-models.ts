@@ -1,10 +1,10 @@
-import { unwrapResponse, type UIClient } from '@bodhiapp/bodhi-js-react';
+import { unwrapResponse, type UIClient } from '@bodhiapp/bodhi-js-react-ext';
 import type {
   AliasResponse,
   ApiFormat,
   ApiModel,
   PaginatedAliasResponse,
-} from '@bodhiapp/bodhi-js-react/api';
+} from '@bodhiapp/bodhi-js-react-ext/api';
 
 export interface BodhiModelInfo {
   id: string;

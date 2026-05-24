@@ -3,11 +3,11 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { crx } from '@crxjs/vite-plugin';
+import manifest from './manifest.json';
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: '/',
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), ...(process.env.VITEST ? [] : [crx({ manifest })])],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -16,6 +16,11 @@ export default defineConfig({
   server: {
     port: 45173,
     strictPort: true,
+  },
+  build: {
+    rollupOptions: {
+      input: { index: 'index.html' },
+    },
   },
   test: {
     globals: true,

@@ -1,10 +1,34 @@
-import { useEffect, useRef } from 'react';
-import { BodhiProvider, useBodhi, BodhiBadge } from '@bodhiapp/bodhi-js-react';
+import { useEffect, useMemo, useRef } from 'react';
+import { BodhiProvider, useBodhi, BodhiBadge, ExtUIClient } from '@bodhiapp/bodhi-js-react-ext';
 import { Toaster } from '@/components/ui/sonner';
 import { AUTH_CLIENT_ID, AUTH_SERVER_URL } from './env';
 import Layout from './components/Layout';
 
-const BASE_PATH = import.meta.env.BASE_URL;
+function parseExtInitParams():
+  | {
+      extension?: {
+        timeoutMs?: number;
+        attempts?: number;
+        attemptWaitMs?: number;
+        attemptTimeout?: number;
+      };
+    }
+  | undefined {
+  const raw = new URLSearchParams(window.location.search).get('ext.initParams');
+  if (!raw) return undefined;
+  try {
+    return JSON.parse(decodeURIComponent(raw));
+  } catch (e) {
+    console.warn('[App] Failed to parse ext.initParams:', e);
+    return undefined;
+  }
+}
+
+function parseDefaultHost(): string | undefined {
+  const param = new URLSearchParams(window.location.search).get('default-host');
+  if (param) return param;
+  return import.meta.env.DEV ? 'http://localhost:55311' : undefined;
+}
 
 function AppContent() {
   const { clientState, showSetup } = useBodhi();
@@ -13,7 +37,6 @@ function AppContent() {
   useEffect(() => {
     const shouldAutoOpen =
       clientState.status === 'direct-not-connected' || clientState.status === 'extension-not-found';
-
     if (shouldAutoOpen && !hasAutoOpenedRef.current) {
       showSetup();
       hasAutoOpenedRef.current = true;
@@ -29,15 +52,19 @@ function AppContent() {
 }
 
 function App() {
+  const defaultHost = useMemo(() => parseDefaultHost(), []);
+  const client = useMemo(
+    () =>
+      new ExtUIClient(AUTH_CLIENT_ID, {
+        authServerUrl: AUTH_SERVER_URL,
+        logLevel: 'warn',
+        initParams: parseExtInitParams(),
+      }),
+    []
+  );
+
   return (
-    <BodhiProvider
-      authClientId={AUTH_CLIENT_ID}
-      clientConfig={{
-        ...(AUTH_SERVER_URL && { authServerUrl: AUTH_SERVER_URL }),
-      }}
-      basePath={BASE_PATH}
-      defaultHost={import.meta.env.DEV ? 'http://localhost:55311' : undefined}
-    >
+    <BodhiProvider client={client} {...(defaultHost !== undefined ? { defaultHost } : {})}>
       <AppContent />
       <div className="fixed bottom-4 right-6 z-50">
         <BodhiBadge size="md" variant="light" />

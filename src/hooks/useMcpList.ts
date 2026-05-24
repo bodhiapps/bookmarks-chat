@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useBodhi } from '@bodhiapp/bodhi-js-react';
-import { createMcpClient } from '@bodhiapp/bodhi-js-react/mcp';
+import { useBodhi } from '@bodhiapp/bodhi-js-react-ext';
+import { createMcpClient } from '@bodhiapp/bodhi-js-react-ext/mcp';
 import { isMcpAvailable, type Mcp, type McpTool } from '@/lib/mcp-tools';
 
 const EMPTY_MCPS: Mcp[] = [];

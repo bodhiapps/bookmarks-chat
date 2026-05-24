@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useBodhi } from '@bodhiapp/bodhi-js-react';
+import { useBodhi } from '@bodhiapp/bodhi-js-react-ext';
 import { Plus, RefreshCw, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import ModelCombobox from './ModelCombobox';
 import McpPopover from './McpPopover';
 import type { Mcp, McpTool } from '@/lib/mcp-tools';
 import type { BodhiModelInfo } from '@/lib/bodhi-models';
-import type { ApiFormat } from '@bodhiapp/bodhi-js-react/api';
+import type { ApiFormat } from '@bodhiapp/bodhi-js-react-ext/api';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => Promise<void>;

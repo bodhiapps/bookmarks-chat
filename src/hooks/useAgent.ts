@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useBodhi } from '@bodhiapp/bodhi-js-react';
+import { useBodhi } from '@bodhiapp/bodhi-js-react-ext';
 import { streamSimple } from '@mariozechner/pi-ai';
 import { Agent } from '@mariozechner/pi-agent-core';
 import type { AgentEvent, AgentMessage, AgentTool, StreamFn } from '@mariozechner/pi-agent-core';
 import { getErrorMessage } from '@/lib/utils';
 import { buildModel, getServerUrlOrThrow } from '@/lib/agent-model';
 import { fetchBodhiModels, type BodhiModelInfo } from '@/lib/bodhi-models';
-import type { ApiFormat } from '@bodhiapp/bodhi-js-react/api';
+import type { ApiFormat } from '@bodhiapp/bodhi-js-react-ext/api';
 
 const SENTINEL_API_KEY = 'bodhiapp_sentinel_api_key_ignored';
 

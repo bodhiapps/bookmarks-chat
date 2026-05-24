@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useBodhi } from '@bodhiapp/bodhi-js-react';
-import { createMcpClient } from '@bodhiapp/bodhi-js-react/mcp';
+import { useBodhi } from '@bodhiapp/bodhi-js-react-ext';
+import { createMcpClient } from '@bodhiapp/bodhi-js-react-ext/mcp';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { Type } from '@mariozechner/pi-ai';
 import type { AgentTool, AgentToolResult } from '@mariozechner/pi-agent-core';
