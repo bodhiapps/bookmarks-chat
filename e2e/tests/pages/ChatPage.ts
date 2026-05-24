@@ -82,7 +82,7 @@ export class ChatPage {
 
     // After approve: Keycloak SSO auto-completes the PKCE flow (same browser
     // context as the login above), redirecting back to the app via 302 chain.
-    await this.page.waitForURL(/localhost:5173/);
+    await this.page.waitForURL(/localhost:45173/);
     await this.page.locator(this.selectors.authenticated).waitFor();
   }
 

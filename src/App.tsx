@@ -36,6 +36,7 @@ function App() {
         ...(AUTH_SERVER_URL && { authServerUrl: AUTH_SERVER_URL }),
       }}
       basePath={BASE_PATH}
+      defaultHost={import.meta.env.DEV ? 'http://localhost:55311' : undefined}
     >
       <AppContent />
       <div className="fixed bottom-4 right-6 z-50">
