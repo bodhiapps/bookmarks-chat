@@ -41,7 +41,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@bodhiapp/app-bindings": "0.0.42",
+    "@bodhiapp/app-bindings": "0.0.43",
     "@eslint/js": "^9.39.1",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/vite": "^4.1.18",
