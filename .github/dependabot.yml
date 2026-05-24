@@ -8,6 +8,18 @@ updates:
       day: 'monday'
     open-pull-requests-limit: 10
     groups:
+      # Keep all eslint packages together (incl. majors) so peer deps like
+      # eslint <-> @eslint/js resolve in a single PR instead of conflicting.
+      eslint:
+        patterns:
+          - 'eslint'
+          - '@eslint/*'
+          - 'eslint-*'
+          - 'typescript-eslint'
+        update-types:
+          - 'minor'
+          - 'patch'
+          - 'major'
       development-dependencies:
         dependency-type: 'development'
         update-types:
