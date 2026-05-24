@@ -36,11 +36,11 @@ export default defineConfig({
 
 ## Entry points (files to add)
 
-| File | Role |
-|---|---|
-| `index.html` (exists) | Full-page tab UI; opened as a tab via `action.onClicked` (no `default_popup`). |
-| `src/background.ts` | MV3 service worker (`background.service_worker`, `type: module`). |
-| `src/offscreen/offscreen.html` + `offscreen.ts` | Offscreen doc hosting PGlite + ingestion. |
+| File                                            | Role                                                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------------------ |
+| `index.html` (exists)                           | Full-page tab UI; opened as a tab via `action.onClicked` (no `default_popup`). |
+| `src/background.ts`                             | MV3 service worker (`background.service_worker`, `type: module`).              |
+| `src/offscreen/offscreen.html` + `offscreen.ts` | Offscreen doc hosting PGlite + ingestion.                                      |
 
 Open the UI as a **full-page tab** from the toolbar icon (not a popup):
 

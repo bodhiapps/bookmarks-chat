@@ -5,11 +5,11 @@ is unchanged; only the client construction and a background service worker are n
 
 ## Package swap
 
-| Current (web) | New (extension) |
-|---|---|
-| `@bodhiapp/bodhi-js-react` | `@bodhiapp/bodhi-js-react-ext` |
-| `WebUIClient` (implicit) | `ExtUIClient` (UI) + `BodhiExtClient` (SW) |
-| `localStorage` tokens | `chrome.storage.session` tokens |
+| Current (web)                              | New (extension)                                        |
+| ------------------------------------------ | ------------------------------------------------------ |
+| `@bodhiapp/bodhi-js-react`                 | `@bodhiapp/bodhi-js-react-ext`                         |
+| `WebUIClient` (implicit)                   | `ExtUIClient` (UI) + `BodhiExtClient` (SW)             |
+| `localStorage` tokens                      | `chrome.storage.session` tokens                        |
 | redirect `http://localhost:45173/callback` | redirect `https://<fixed-id>.chromiumapp.org/callback` |
 
 ```bash
@@ -17,9 +17,9 @@ npm rm @bodhiapp/bodhi-js-react
 npm i @bodhiapp/bodhi-js-react-ext
 ```
 
-Reference: `…/bodhi-browser/sdk-test-app/ext/src/App.tsx` (UI) and
-`…/sdk-test-app/ext/src-ext/background.ts` (SW), plus the SDK at
-`…/bodhi-browser/bodhi-js-sdk/{ext,react-ext}`.
+Reference: `bodhi-browser/sdk-test-app/ext/src/App.tsx` (UI) and
+`bodhi-browser/sdk-test-app/ext/src-ext/background.ts` (SW), plus the SDK at
+`bodhi-browser/bodhi-js-sdk/{ext,react-ext}`.
 
 ## UI side — `src/App.tsx`
 
@@ -88,7 +88,7 @@ auth state. (`init()` wires `chrome.runtime` listeners and discovers the compani
    exchanges `code`→tokens and stores them in `chrome.storage.session`.
 
 This is exactly the flow automated in e2e — see `06` and
-`…/sdk-test-app/e2e/tests/pages/AuthSection.ts` (`loginWithAccessRequest`).
+`bodhi-browser/sdk-test-app/e2e/tests/pages/AuthSection.ts` (`loginWithAccessRequest`).
 
 ## Token storage
 
@@ -101,10 +101,10 @@ the Bodhi access token as `Authorization: Bearer` + `x-api-key` exactly as today
 
 Keep build-time validation. Vars (provided via CRXJS `define`/`import.meta.env`, see `03`):
 
-| Var | Example | Notes |
-|---|---|---|
-| `VITE_BODHI_APP_CLIENT_ID` | `bodhi-app-f181a4d1-…` | Reuse existing app client. |
-| `VITE_BODHI_AUTH_SERVER_URL` | `https://main-id.getbodhi.app/realms/bodhi` | Same as today. |
+| Var                          | Example                                     | Notes                      |
+| ---------------------------- | ------------------------------------------- | -------------------------- |
+| `VITE_BODHI_APP_CLIENT_ID`   | `bodhi-app-f181a4d1-…`                      | Reuse existing app client. |
+| `VITE_BODHI_AUTH_SERVER_URL` | `https://main-id.getbodhi.app/realms/bodhi` | Same as today.             |
 
 > **Ops prerequisite (blocking for login):** register
 > `https://<fixed-extension-id>.chromiumapp.org/callback` as a valid redirect URI for

@@ -4,10 +4,16 @@ Replace the current `webServer` + `goto(localhost:45173)` model with a **persist
 load-extension** harness that mirrors `sdk-test-app`'s real-OAuth flow. Keep the in-process
 Bodhi server from the current `global-setup`.
 
+> **E2E is not a final phase — it is built and extended within every phase** (see `07`). The
+> harness below (launch, real OAuth, CI wiring) is established in **Phase 1** alongside
+> `chat.spec.ts`; **Phase 2** extends it with bookmark seeding + a metadata-search spec; **Phase
+> 3** extends it with content stubs + a content-search case. **A phase is done only when its
+> extended e2e is green in GitHub Actions on the pushed branch** — not merely locally.
+
 Primary references:
-- `…/bodhi-browser/sdk-test-app/e2e/tests/utils/browser-manager.ts` (two-extension launch)
-- `…/sdk-test-app/e2e/tests/pages/AuthSection.ts` (`loginWithAccessRequest` — the real OAuth)
-- `…/sdk-test-app/e2e/tests/global-setup.ts` (in-process Bodhi server + `setupServerTestData`)
+- `bodhi-browser/sdk-test-app/e2e/tests/utils/browser-manager.ts` (two-extension launch)
+- `bodhi-browser/sdk-test-app/e2e/tests/pages/AuthSection.ts` (`loginWithAccessRequest` — the real OAuth)
+- `bodhi-browser/sdk-test-app/e2e/tests/global-setup.ts` (in-process Bodhi server + `setupServerTestData`)
 - current repo `e2e/tests/{global-setup.ts,utils/bodhi-server-manager.ts,pages/*}` (reuse)
 - yt-chat `apps/web/e2e/search.spec.ts` + `pages/YouTubePage.ts` (fixture-stub assertions)
 
@@ -17,7 +23,7 @@ Primary references:
 import { chromium, type BrowserContext } from '@playwright/test';
 const APP_DIST = path.resolve(__dirname, '../../../dist');   // our built extension
 // Companion ext: build the bodhi-browser-ext repo, then point this at its dist via env.
-// Default source path: …/BodhiSearch/bodhi-browser/bodhi-browser-ext/dist
+// Default source: BodhiSearch/bodhi-browser repo → bodhi-browser-ext/dist
 const COMPANION_DIST = process.env.BODHI_EXT_DIST!;          // required for e2e
 
 export async function launchWithExtensions(userDataDir = ''): Promise<BrowserContext> {
@@ -97,15 +103,19 @@ async login({ username, password }) {
 }
 ```
 
-## Tests
+## Tests (grown across phases)
 
-1. `e2e/chat.spec.ts` (port): open `chrome-extension://<EXTENSION_ID>/index.html` → real login →
-   load models → select model → ask "what day comes after monday" → assert "tuesday". (Auth +
-   chat parity.)
-2. `e2e/search.spec.ts` (new, yt-chat style): seed bookmarks + stub content → login → wait for
-   ingestion (`db:count` ≥ K, or a UI "indexed" state) → ask "search my bookmarks for <fixture
-   term> as a table" → assert a `search_bookmarks` tool call + a fixture title rendered in a
-   markdown table.
+1. **Phase 1** — `e2e/chat.spec.ts` (port): open `chrome-extension://<EXTENSION_ID>/index.html` →
+   real login → load models → select model → ask "what day comes after monday" → assert
+   "tuesday". (Auth + chat parity.) Must be green in GitHub Actions to close Phase 1.
+2. **Phase 2** — `e2e/search.spec.ts` (new, yt-chat style): seed bookmarks via
+   `serviceWorker.evaluate` → login → wait for ingestion (`db:count` ≥ K, or a UI "indexed"
+   state) → ask "search my bookmarks for <fixture term> as a table" → assert a `search_bookmarks`
+   tool call + a seeded title rendered in a markdown table (metadata match). Green in CI to close
+   Phase 2.
+3. **Phase 3** — extend `search.spec.ts` (or add a case): stub fixture **content** for a bookmark
+   whose title/url do *not* contain the query term → assert the content-only query returns it.
+   Green in CI to close Phase 3.
 
 ## Config & scripts
 - `playwright.config.ts`: drop `webServer`; keep `globalSetup`. Tests build their own context via
@@ -114,9 +124,11 @@ async login({ username, password }) {
   (`build` → `playwright test`). Document where the companion build comes from (build the
   `bodhi-browser-ext` repo, or point at a checked-in/prebuilt `dist`).
 
-## Acceptance criteria
-- `npm run build && npm run test:e2e` passes locally (headed) and in CI (xvfb): both specs green.
+## Acceptance criteria (per phase)
+- The phase's e2e (the spec(s) listed above for that phase) passes locally (headed) **and is
+  green in GitHub Actions on the pushed branch** — local-only is not sufficient. CI green is the
+  gate that closes the phase.
 - The login step drives the **real** Keycloak form + access-request approval (no stubbing of
   `launchWebAuthFlow`).
-- The search spec proves end-to-end: seeded bookmark → ingested → BM25-searchable → tool-called
-  → rendered.
+- The search specs prove end-to-end: seeded bookmark → ingested → BM25-searchable → tool-called
+  → rendered (metadata in Phase 2; page-content in Phase 3).

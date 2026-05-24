@@ -56,13 +56,13 @@ writer, and matches MV3 constraints (the SW cannot reliably run WASM/DOM and is 
 
 Define a small typed protocol. All messages are `{ type, requestId?, payload }`.
 
-| `type` | from → to | payload | reply |
-|---|---|---|---|
-| `db:query` | UI → offscreen | `SearchParams` (see `05`) | `SearchHit[]` |
-| `db:count` | UI → offscreen | `{}` | `{ documents: number, pendingContent: number }` |
-| `ingest:start` | SW → offscreen | `{ reason }` | `{ accepted: true }` |
-| `ingest:progress` | offscreen → UI/SW | `{ phase, done, total, errors }` | — |
-| `auth:state` | SW → UI | `AuthState` (optional; `useBodhi` may suffice) | — |
+| `type`            | from → to         | payload                                        | reply                                           |
+| ----------------- | ----------------- | ---------------------------------------------- | ----------------------------------------------- |
+| `db:query`        | UI → offscreen    | `SearchParams` (see `05`)                      | `SearchHit[]`                                   |
+| `db:count`        | UI → offscreen    | `{}`                                           | `{ documents: number, pendingContent: number }` |
+| `ingest:start`    | SW → offscreen    | `{ reason }`                                   | `{ accepted: true }`                            |
+| `ingest:progress` | offscreen → UI/SW | `{ phase, done, total, errors }`               | —                                               |
+| `auth:state`      | SW → UI           | `AuthState` (optional; `useBodhi` may suffice) | —                                               |
 
 Implementation notes:
 - Use `requestId` + a `Promise` registry to model request/response over `chrome.runtime`.
