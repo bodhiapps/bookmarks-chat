@@ -5,6 +5,7 @@ import { useMcpList } from '@/hooks/useMcpList';
 import { useMcpSelection } from '@/hooks/useMcpSelection';
 import { useMcpAgentTools } from '@/hooks/useMcpAgentTools';
 import { BOOKMARK_SYSTEM_PROMPT, useBookmarkSearchTool } from '@/hooks/useBookmarkSearchTool';
+import { useBookmarkIndex } from '@/hooks/useBookmarkIndex';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 
@@ -12,6 +13,8 @@ export default function ChatDemo() {
   const { mcps, toolsByMcpId, isLoading: isMcpsLoading } = useMcpList();
   const { enabledMcpTools, toggleTool, toggleMcp, getEnabledToolCount, getCheckboxState } =
     useMcpSelection(mcps, toolsByMcpId);
+
+  useBookmarkIndex();
 
   const mcpTools = useMcpAgentTools({ enabledMcpTools, mcps, toolsByMcpId });
   const bookmarkTools = useBookmarkSearchTool();

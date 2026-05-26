@@ -4,11 +4,17 @@ import { closeDexie, getDexie } from '@/db/dexie';
 import { diffRows, syncBookmarks } from './sync';
 
 const NS = 'test';
-beforeEach(async () => { closeDexie(); await getDexie(NS).delete(); });
+beforeEach(async () => {
+  closeDexie();
+  await getDexie(NS).delete();
+});
 
 describe('diffRows', () => {
   it('keeps indexedAt when hash unchanged, resets when changed, deletes vanished', () => {
-    const fresh = [{ id: 'a', hash: 'h1' }, { id: 'b', hash: 'h2new' }];
+    const fresh = [
+      { id: 'a', hash: 'h1' },
+      { id: 'b', hash: 'h2new' },
+    ];
     const existing = [
       { id: 'a', contentHash: 'h1', indexedAt: 111 },
       { id: 'b', contentHash: 'h2old', indexedAt: 222 },

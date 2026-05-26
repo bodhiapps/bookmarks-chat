@@ -15,7 +15,10 @@ export interface CachedBookmark {
   indexedAt: number;
 }
 
-export interface MetaRow { key: string; value: number }
+export interface MetaRow {
+  key: string;
+  value: number;
+}
 
 export class BookmarksDexie extends Dexie {
   bookmarks!: Table<CachedBookmark, string>;
@@ -33,19 +36,27 @@ export class BookmarksDexie extends Dexie {
 let current: { ns: string; db: BookmarksDexie } | undefined;
 
 export function getDexie(ns: string): BookmarksDexie {
-  if (current && (current.ns !== ns || !current.db.isOpen())) { current.db.close(); current = undefined; }
+  if (current && (current.ns !== ns || !current.db.isOpen())) {
+    current.db.close();
+    current = undefined;
+  }
   if (!current) current = { ns, db: new BookmarksDexie(ns) };
   return current.db;
 }
 
 export function closeDexie(): void {
-  if (current) { current.db.close(); current = undefined; }
+  if (current) {
+    current.db.close();
+    current = undefined;
+  }
 }
 
 export async function contentHash(title: string, url: string, folderPath: string): Promise<string> {
   const data = new TextEncoder().encode(`${title} ${url} ${folderPath}`);
   const digest = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(new Uint8Array(digest))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export async function getMeta(db: BookmarksDexie, key: string): Promise<number> {

@@ -4,7 +4,7 @@ import { buildSearchQuery } from './search';
 describe('buildSearchQuery', () => {
   it('uses BM25 relevance order when query present', () => {
     const { sql, args } = buildSearchQuery({ query: 'rust async' });
-    expect(sql).toContain("to_bm25query");
+    expect(sql).toContain('to_bm25query');
     expect(sql).toContain('<@>');
     expect(args).toContain('rust async');
   });

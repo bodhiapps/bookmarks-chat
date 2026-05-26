@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import type { AgentTool, AgentToolResult } from '@mariozechner/pi-agent-core';
 import { StringEnum, Type } from '@mariozechner/pi-ai';
-import { queryOffscreen } from '@/lib/messages';
-import type { SearchParams } from '@/services/search';
+import { documentCount } from '@/db/pglite';
+import { searchDocuments, type SearchParams } from '@/services/search';
+
+const NS = 'default';
 
 export const BOOKMARK_SYSTEM_PROMPT = `You are a helpful assistant for the user's browser bookmarks.
 
@@ -16,10 +18,14 @@ Render Link as a Markdown link to the row's url. If there are no results, say so
 
 const parameters = Type.Object({
   query: Type.Optional(Type.String({ description: 'Free-text terms; ranked by BM25 relevance.' })),
-  folder: Type.Optional(Type.String({ description: 'Filter to bookmarks whose folder path contains this text.' })),
-  sort: Type.Optional(StringEnum(['relevance', 'recent'], {
-    description: "'relevance' (default, needs query) or 'recent' (newest first).",
-  })),
+  folder: Type.Optional(
+    Type.String({ description: 'Filter to bookmarks whose folder path contains this text.' })
+  ),
+  sort: Type.Optional(
+    StringEnum(['relevance', 'recent'], {
+      description: "'relevance' (default, needs query) or 'recent' (newest first).",
+    })
+  ),
   limit: Type.Optional(Type.Number({ description: 'Max results (default 10, max 25).' })),
 });
 
@@ -39,11 +45,12 @@ export function useBookmarkSearchTool(): AgentTool[] {
       description: DESCRIPTION,
       parameters,
       execute: async (_id: string, params: unknown): Promise<AgentToolResult<unknown>> => {
-        const { documents } = await queryOffscreen('db:count', {});
-        if (documents === 0) {
-          return textResult('No bookmarks are indexed yet. Wait for indexing to finish and try again.');
+        if ((await documentCount(NS)) === 0) {
+          return textResult(
+            'No bookmarks are indexed yet. Wait for indexing to finish and try again.'
+          );
         }
-        const rows = await queryOffscreen('db:query', (params ?? {}) as SearchParams);
+        const rows = await searchDocuments(NS, (params ?? {}) as SearchParams);
         if (rows.length === 0) return textResult('No matching bookmarks found.');
         return { content: [{ type: 'text', text: JSON.stringify(rows) }], details: rows };
       },

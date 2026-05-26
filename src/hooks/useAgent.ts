@@ -55,7 +55,9 @@ export function useAgent(tools: AgentTool[], systemPrompt = '') {
   const systemPromptRef = useRef<string>(systemPrompt);
   const isLoadingModelsRef = useRef(false);
 
-  useEffect(() => { systemPromptRef.current = systemPrompt; }, [systemPrompt]);
+  useEffect(() => {
+    systemPromptRef.current = systemPrompt;
+  }, [systemPrompt]);
 
   useEffect(() => {
     authTokenRef.current = auth.accessToken;

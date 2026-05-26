@@ -7,7 +7,14 @@ export function bookmarkToDoc(row: CachedBookmark): DocumentRow {
   const content = row.content
     ? `${row.title} ${row.url} ${row.folderPath} ${row.content}`
     : `${row.title} ${row.url} ${row.folderPath}`;
-  return { id: row.id, title: row.title, url: row.url, folder: row.folderPath, content, date_added: row.dateAdded };
+  return {
+    id: row.id,
+    title: row.title,
+    url: row.url,
+    folder: row.folderPath,
+    content,
+    date_added: row.dateAdded,
+  };
 }
 
 async function runIndexPending(ns: string): Promise<number> {
@@ -19,7 +26,7 @@ async function runIndexPending(ns: string): Promise<number> {
     const batch = pending.slice(i, i + INDEX_BATCH);
     await upsertDocuments(ns, batch.map(bookmarkToDoc));
     const now = Date.now();
-    await db.bookmarks.bulkPut(batch.map((r) => ({ ...r, indexedAt: now })));
+    await db.bookmarks.bulkPut(batch.map(r => ({ ...r, indexedAt: now })));
     indexed += batch.length;
   }
   await optimizeBm25Index(ns);
@@ -30,8 +37,14 @@ const chains = new Map<string, Promise<unknown>>();
 
 export function indexPending(ns: string): Promise<number> {
   const prev = chains.get(ns) ?? Promise.resolve();
-  const next = prev.then(() => runIndexPending(ns), () => runIndexPending(ns));
-  chains.set(ns, next.catch(() => {}));
+  const next = prev.then(
+    () => runIndexPending(ns),
+    () => runIndexPending(ns)
+  );
+  chains.set(
+    ns,
+    next.catch(() => {})
+  );
   return next;
 }
 

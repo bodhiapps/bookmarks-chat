@@ -12,8 +12,14 @@ export interface DocumentRow {
   date_added: number;
 }
 
-const DOCUMENT_COLUMNS = ['id', 'title', 'url', 'folder', 'content', 'date_added'] as const satisfies
-  readonly (keyof DocumentRow)[];
+const DOCUMENT_COLUMNS = [
+  'id',
+  'title',
+  'url',
+  'folder',
+  'content',
+  'date_added',
+] as const satisfies readonly (keyof DocumentRow)[];
 
 const UPSERT_BATCH = 200;
 const SCHEMA_VERSION = '1';
@@ -56,7 +62,7 @@ function createDb(ns: string): Promise<DbHandle> {
   try {
     return PGliteWorker.create(
       new Worker(new URL('./pglite-worker.ts', import.meta.url), { type: 'module' }),
-      { dataDir, extensions: { live } },
+      { dataDir, extensions: { live } }
     );
   } catch {
     return PGlite.create({ dataDir, extensions: { pg_textsearch } });
@@ -73,7 +79,9 @@ async function openDb(ns: string): Promise<DbHandle> {
 }
 
 async function migrateSchema(db: DbHandle): Promise<void> {
-  const res = await db.query<{ value: string }>(`SELECT value FROM meta WHERE key = 'schema_version'`);
+  const res = await db.query<{ value: string }>(
+    `SELECT value FROM meta WHERE key = 'schema_version'`
+  );
   if (res.rows[0]?.value === SCHEMA_VERSION) return;
   await db.exec(`
     DROP TABLE IF EXISTS documents;
@@ -86,7 +94,7 @@ export function ensureDb(ns: string): Promise<DbHandle> {
   if (current?.ns === ns) return current.promise;
   if (current) {
     const prev = current.promise;
-    void prev.then((db) => db.close()).catch(() => {});
+    void prev.then(db => db.close()).catch(() => {});
     current = undefined;
   }
   const promise = (async () => {
@@ -98,13 +106,15 @@ export function ensureDb(ns: string): Promise<DbHandle> {
       return await openDb(ns);
     }
   })();
-  promise.catch(() => { if (current?.promise === promise) current = undefined; });
+  promise.catch(() => {
+    if (current?.promise === promise) current = undefined;
+  });
   current = { ns, promise };
   return promise;
 }
 
 function deleteDatabase(name: string): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const req = indexedDB.deleteDatabase(name);
     req.onsuccess = () => resolve();
     req.onerror = () => resolve();
@@ -116,7 +126,10 @@ async function deleteVolume(ns: string): Promise<void> {
   const marker = `pglite-bookmarks-${ns}`;
   const dbs = (await indexedDB.databases?.()) ?? [];
   await Promise.all(
-    dbs.map((d) => d.name).filter((n): n is string => !!n && n.includes(marker)).map(deleteDatabase),
+    dbs
+      .map(d => d.name)
+      .filter((n): n is string => !!n && n.includes(marker))
+      .map(deleteDatabase)
   );
 }
 
@@ -124,7 +137,11 @@ export async function recoverPGlite(ns: string): Promise<void> {
   if (current?.ns === ns) {
     const prev = current.promise;
     current = undefined;
-    try { await (await prev).close(); } catch { /* already broken */ }
+    try {
+      await (await prev).close();
+    } catch {
+      /* already broken */
+    }
   }
   await deleteVolume(ns);
 }
@@ -139,16 +156,18 @@ export async function upsertDocuments(ns: string, rows: DocumentRow[]): Promise<
   if (rows.length === 0) return;
   const db = await ensureDb(ns);
   const columnList = DOCUMENT_COLUMNS.join(', ');
-  const updateSet = DOCUMENT_COLUMNS.filter((c) => c !== 'id').map((c) => `${c} = EXCLUDED.${c}`).join(', ');
+  const updateSet = DOCUMENT_COLUMNS.filter(c => c !== 'id')
+    .map(c => `${c} = EXCLUDED.${c}`)
+    .join(', ');
   for (let i = 0; i < rows.length; i += UPSERT_BATCH) {
     const batch = rows.slice(i, i + UPSERT_BATCH);
-    await db.transaction(async (tx) => {
+    await db.transaction(async tx => {
       const placeholders = buildPlaceholders(batch.length, DOCUMENT_COLUMNS.length);
-      const params = batch.flatMap((r) => DOCUMENT_COLUMNS.map((c) => r[c]));
+      const params = batch.flatMap(r => DOCUMENT_COLUMNS.map(c => r[c]));
       await tx.query(
         `INSERT INTO documents (${columnList}) VALUES ${placeholders}
          ON CONFLICT (id) DO UPDATE SET ${updateSet}`,
-        params,
+        params
       );
     });
   }

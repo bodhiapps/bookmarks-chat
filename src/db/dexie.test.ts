@@ -12,8 +12,14 @@ describe('BookmarksDexie', () => {
   it('stores and reads back a bookmark', async () => {
     const db = getDexie(NS);
     await db.bookmarks.put({
-      id: '1', title: 'T', url: 'https://x', folderPath: 'A/B', dateAdded: 5,
-      contentHash: await contentHash('T', 'https://x', 'A/B'), contentStatus: 'pending', indexedAt: 0,
+      id: '1',
+      title: 'T',
+      url: 'https://x',
+      folderPath: 'A/B',
+      dateAdded: 5,
+      contentHash: await contentHash('T', 'https://x', 'A/B'),
+      contentStatus: 'pending',
+      indexedAt: 0,
     });
     const row = await db.bookmarks.get('1');
     expect(row?.url).toBe('https://x');

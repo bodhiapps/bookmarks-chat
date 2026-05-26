@@ -16,9 +16,28 @@ export class ExtChatPage {
     chatInput: '[data-testid="chat-input"]',
     sendButton: '[data-testid="send-button"]',
     chatProcessing: '[data-testid="chat-processing"]',
+    toolCall: '[data-testid="tool-call-message"]',
     message: (turn: number, role: string) =>
       `[data-testid="chat-message-turn-${turn}"][data-messagetype="${role}"]`,
   };
+
+  async waitForIndexed(_context: BrowserContext, expected: number): Promise<void> {
+    await expect
+      .poll(
+        async () =>
+          this.page.evaluate(
+            () =>
+              (window as unknown as { __bookmarksIndex?: { count: number } }).__bookmarksIndex
+                ?.count ?? 0
+          ),
+        { timeout: 45000, intervals: [500, 1000, 2000] }
+      )
+      .toBeGreaterThanOrEqual(expected);
+  }
+
+  async expectToolCalled(): Promise<void> {
+    await this.page.locator(this.selectors.toolCall).first().waitFor();
+  }
 
   async openApp(bodhiServerUrl: string): Promise<void> {
     const initParams = encodeURIComponent(

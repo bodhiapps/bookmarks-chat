@@ -21,7 +21,7 @@ export default defineConfig({
   worker: { format: 'es' },
   build: {
     rollupOptions: {
-      input: { index: 'index.html', offscreen: 'src/offscreen/offscreen.html' },
+      input: { index: 'index.html' },
     },
   },
   test: {

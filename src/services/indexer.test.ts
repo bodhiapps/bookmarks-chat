@@ -5,23 +5,59 @@ import { documentCount, recoverPGlite } from '@/db/pglite';
 import { bookmarkToDoc, indexPending } from './indexer';
 
 const NS = 'test';
-beforeEach(async () => { closeDexie(); await getDexie(NS).delete(); });
-afterEach(async () => { await recoverPGlite(NS); });
+beforeEach(async () => {
+  closeDexie();
+  await getDexie(NS).delete();
+});
+afterEach(async () => {
+  await recoverPGlite(NS);
+});
 
 describe('indexer', () => {
   it('bookmarkToDoc builds content = title + url + folder', () => {
     const doc = bookmarkToDoc({
-      id: '1', title: 'T', url: 'U', folderPath: 'F', dateAdded: 9,
-      contentHash: 'h', contentStatus: 'pending', indexedAt: 0,
+      id: '1',
+      title: 'T',
+      url: 'U',
+      folderPath: 'F',
+      dateAdded: 9,
+      contentHash: 'h',
+      contentStatus: 'pending',
+      indexedAt: 0,
     });
-    expect(doc).toEqual({ id: '1', title: 'T', url: 'U', folder: 'F', content: 'T U F', date_added: 9 });
+    expect(doc).toEqual({
+      id: '1',
+      title: 'T',
+      url: 'U',
+      folder: 'F',
+      content: 'T U F',
+      date_added: 9,
+    });
   });
 
   it('indexes only pending rows then marks them indexed', async () => {
     const db = getDexie(NS);
     await db.bookmarks.bulkPut([
-      { id: '1', title: 'A', url: 'u1', folderPath: '', dateAdded: 1, contentHash: 'h', contentStatus: 'pending', indexedAt: 0 },
-      { id: '2', title: 'B', url: 'u2', folderPath: '', dateAdded: 2, contentHash: 'h', contentStatus: 'pending', indexedAt: 0 },
+      {
+        id: '1',
+        title: 'A',
+        url: 'u1',
+        folderPath: '',
+        dateAdded: 1,
+        contentHash: 'h',
+        contentStatus: 'pending',
+        indexedAt: 0,
+      },
+      {
+        id: '2',
+        title: 'B',
+        url: 'u2',
+        folderPath: '',
+        dateAdded: 2,
+        contentHash: 'h',
+        contentStatus: 'pending',
+        indexedAt: 0,
+      },
     ]);
     const n = await indexPending(NS);
     expect(n).toBe(2);
