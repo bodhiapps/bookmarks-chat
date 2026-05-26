@@ -1,3 +1,5 @@
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { extractTextFromAgentMessage, getToolCalls, type AgentMessage } from '@/types/chat';
 
 interface MessageBubbleProps {
@@ -21,7 +23,13 @@ export default function MessageBubble({ message, turn }: MessageBubbleProps) {
           isUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
         }`}
       >
-        <div className="whitespace-pre-wrap break-words">{text}</div>
+        {message.role === 'user' ? (
+          <div className="whitespace-pre-wrap break-words">{text}</div>
+        ) : (
+          <div className="prose prose-sm dark:prose-invert max-w-none break-words [&_table]:w-full [&_th]:text-left [&_td]:border [&_th]:border [&_td]:px-2 [&_th]:px-2">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+          </div>
+        )}
       </div>
     </div>
   );

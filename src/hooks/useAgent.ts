@@ -38,7 +38,7 @@ function getOrCreateAgent(): Agent {
   return _agent;
 }
 
-export function useAgent(tools: AgentTool[]) {
+export function useAgent(tools: AgentTool[], systemPrompt = '') {
   const { client, auth, isAuthenticated, isReady } = useBodhi();
 
   const [messages, setMessages] = useState<AgentMessage[]>([]);
@@ -52,7 +52,10 @@ export function useAgent(tools: AgentTool[]) {
 
   const authTokenRef = useRef<string | null>(auth.accessToken);
   const toolsRef = useRef<AgentTool[]>(tools);
+  const systemPromptRef = useRef<string>(systemPrompt);
   const isLoadingModelsRef = useRef(false);
+
+  useEffect(() => { systemPromptRef.current = systemPrompt; }, [systemPrompt]);
 
   useEffect(() => {
     authTokenRef.current = auth.accessToken;
@@ -153,7 +156,7 @@ export function useAgent(tools: AgentTool[]) {
       const agent = getOrCreateAgent();
       agent.state.model = buildModel(selectedModel, serverUrl, selectedApiFormat);
       agent.state.tools = toolsRef.current;
-      agent.state.systemPrompt = '';
+      agent.state.systemPrompt = systemPromptRef.current;
 
       try {
         await agent.prompt(prompt);

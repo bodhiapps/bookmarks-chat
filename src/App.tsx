@@ -3,6 +3,7 @@ import { BodhiProvider, useBodhi, BodhiBadge, ExtUIClient } from '@bodhiapp/bodh
 import { Toaster } from '@/components/ui/sonner';
 import { AUTH_CLIENT_ID, AUTH_SERVER_URL } from './env';
 import Layout from './components/Layout';
+import type { Message } from './lib/messages';
 
 function parseExtInitParams():
   | {
@@ -31,8 +32,18 @@ function parseDefaultHost(): string | undefined {
 }
 
 function AppContent() {
-  const { clientState, showSetup } = useBodhi();
+  const { clientState, showSetup, isAuthenticated } = useBodhi();
   const hasAutoOpenedRef = useRef(false);
+  const hasTriggeredIngestRef = useRef(false);
+
+  useEffect(() => {
+    if (isAuthenticated && !hasTriggeredIngestRef.current) {
+      hasTriggeredIngestRef.current = true;
+      chrome.runtime
+        .sendMessage({ type: 'ingest:trigger', payload: { reason: 'auth-ready' } } satisfies Message)
+        .catch(() => {});
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const shouldAutoOpen =
