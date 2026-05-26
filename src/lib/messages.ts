@@ -12,6 +12,7 @@ export type Message =
   | { type: 'db:query'; requestId: string; payload: SearchParams }
   | { type: 'db:count'; requestId: string; payload: Record<string, never> }
   | { type: 'ingest:start'; requestId: string; payload: { reason: string; nodes: BookmarkNode[] } }
+  | { type: 'ingest:trigger'; payload: { reason: string } }
   | { type: 'ingest:progress'; payload: IngestProgress }
   | { type: 'db:query:reply'; requestId: string; payload: SearchHit[] }
   | { type: 'db:count:reply'; requestId: string; payload: DbCountReply }
