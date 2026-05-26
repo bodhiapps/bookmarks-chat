@@ -64,7 +64,7 @@ function App() {
   );
 
   return (
-    <BodhiProvider client={client} {...(defaultHost !== undefined ? { defaultHost } : {})}>
+    <BodhiProvider client={client} setupModal="setup-modal-v2" {...(defaultHost !== undefined ? { defaultHost } : {})}>
       <AppContent />
       <div className="fixed bottom-4 right-6 z-50">
         <BodhiBadge size="md" variant="light" />
