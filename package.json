@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "@bodhiapp/bodhi-js-react-ext": "^0.0.39",
-    "@electric-sql/pglite": "^0.4.5",
-    "@mariozechner/pi-agent-core": "^0.67.3",
-    "@mariozechner/pi-ai": "^0.67.3",
+    "@electric-sql/pglite": "^0.4.6",
+    "@mariozechner/pi-agent-core": "^0.73.1",
+    "@mariozechner/pi-ai": "^0.73.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.2.6",
