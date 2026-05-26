@@ -17,9 +17,11 @@ export default defineConfig({
     port: 45173,
     strictPort: true,
   },
+  optimizeDeps: { exclude: ['@electric-sql/pglite'] },
+  worker: { format: 'es' },
   build: {
     rollupOptions: {
-      input: { index: 'index.html' },
+      input: { index: 'index.html', offscreen: 'src/offscreen/offscreen.html' },
     },
   },
   test: {

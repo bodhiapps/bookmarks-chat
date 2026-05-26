@@ -10,4 +10,16 @@ chrome.action.onClicked.addListener(() => {
   chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
 });
 
-chrome.runtime.onInstalled.addListener(() => console.log('[bg] installed'));
+async function ensureOffscreen(): Promise<void> {
+  if (await chrome.offscreen.hasDocument()) return;
+  await chrome.offscreen.createDocument({
+    url: chrome.runtime.getURL('src/offscreen/offscreen.html'),
+    reasons: [chrome.offscreen.Reason.WORKERS, chrome.offscreen.Reason.DOM_PARSER],
+    justification: 'Owns PGlite + Dexie for local bookmark indexing and search.',
+  });
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('[bg] installed');
+  void ensureOffscreen();
+});

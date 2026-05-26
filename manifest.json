@@ -6,9 +6,9 @@
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiuutyxDUDZG0sLqPUTO/1ixzA+kq7vdaLQcP213usG9YF8L1YvPLwORIrudZTxbO0Zvvk96l3Bv47r1kMztWcdw6x3jNiTbBkDgXP6ghBgRBxmSNx7UfyLoNxgZ/tTs8+J1D/9+H7kgXClG8Xv1NK9eBqyjL/JCCsLNepRj3QSu2Epj8NTEDWBdIdde0zmAehYr0gMhwqVzkJybyBv9gqHExUi+Nhh6HCx0t3FuqQVjV214CAn/Fyw08qAVzXfYqkcqx/leItQiyF2KpqOoMNsVQwWR9bGPzn2o4p0V1GfoksMvw1JHsFc7oABCC4wgT8k4DPljD3lLRS1Z2VRQQFQIDAQAB",
   "action": { "default_title": "Open Bookmarks Chat" },
   "background": { "service_worker": "src/background.ts", "type": "module" },
-  "permissions": ["identity", "storage"],
+  "permissions": ["identity", "storage", "offscreen", "bookmarks", "alarms"],
   "host_permissions": ["https://main-id.getbodhi.app/*"],
   "web_accessible_resources": [
-    { "resources": ["assets/*"], "matches": ["<all_urls>"] }
+    { "resources": ["assets/*", "src/offscreen/offscreen.html"], "matches": ["<all_urls>"] }
   ]
 }
